@@ -26,6 +26,8 @@ public class HelloApplication extends Application {
         TableColumn lastNameCol = new TableColumn("Email");
         tb.getColumns().addAll(firstNameCol, lastNameCol);
 
+        // Start web server.
+        WebServer.getInstance().startServer();
     }
 
     public static void main(String[] args) {
