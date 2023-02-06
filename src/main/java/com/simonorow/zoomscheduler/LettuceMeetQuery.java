@@ -1,15 +1,13 @@
 package com.simonorow.zoomscheduler;
 
-import com.simonorow.zoomscheduler.Models.LettuceMeetResponse;
+import com.simonorow.zoomscheduler.Models.LettuceMeet.LettuceMeetResponse;
 
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.Scanner;
 import com.google.gson.Gson;
-import javax.net.ssl.*;
 
 public class LettuceMeetQuery {
 

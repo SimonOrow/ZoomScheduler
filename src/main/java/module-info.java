@@ -7,4 +7,5 @@ module com.simonorow.zoomscheduler {
     opens com.simonorow.zoomscheduler to javafx.fxml;
     opens com.simonorow.zoomscheduler.Models to com.google.gson;
     exports com.simonorow.zoomscheduler;
+    opens com.simonorow.zoomscheduler.Models.LettuceMeet to com.google.gson;
 }
