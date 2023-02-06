@@ -25,11 +25,6 @@ public class WebServer {
         return single_instance;
     }
 
-    public static void setToken(String token) {
-        currentToken = token;
-        receivedToken = true;
-    }
-
     public static void startServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(4000), 0);
         server.createContext("/zoom", new MyHandler());
@@ -50,13 +45,13 @@ public class WebServer {
             os.write(response.getBytes());
             os.close();
 
-            // Update token.
+            // Update token and status.
             currentToken = params.get("code");
-
+            receivedToken = true;
         }
     }
 
-    // Used to obtain GET parameters
+    // Used to obtain GET parameters. Creates a hashmap of all get params and values.
     public static Map<String, String> queryToMap(String query) {
         if(query == null) {
             return null;

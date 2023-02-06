@@ -1,0 +1,43 @@
+{
+  "data": {
+    "event": {
+      "id": "wZv3j",
+      "title": "Simon's Meeting",
+      "description": "Important meeting",
+      "type": 0,
+      "pollStartTime": "09:00:00.000Z",
+      "pollEndTime": "17:00:00.000Z",
+      "maxScheduledDurationMins": null,
+      "timeZone": "America/Detroit",
+      "pollDates": ["2023-02-06"],
+      "start": null,
+      "end": null,
+      "isScheduled": false,
+      "createdAt": "2023-02-06T08:01:40.088Z",
+      "updatedAt": "2023-02-06T08:01:40.088Z",
+      "user": null,
+      "googleEvents": null,
+      "pollResponses": [{
+        "id": "UG9sbFJlc3BvbnNlOjI3NTQ5OTk==",
+        "user": {
+          "__typename": "AnonymousUser",
+          "name": "Simon Orow",
+          "email": "simon@simonorow.com"
+        },
+        "availabilities": [{
+          "start": "2023-02-06T10:00:00.000Z",
+          "end": "2023-02-06T11:00:00.000Z"
+        }, {
+          "start": "2023-02-06T12:00:00.000Z",
+          "end": "2023-02-06T14:00:00.000Z"
+        }, {
+          "start": "2023-02-06T15:30:00.000Z",
+          "end": "2023-02-06T16:30:00.000Z"
+        }],
+        "event": {
+          "id": "wZv3j"
+        }
+      }]
+    }
+  }
+}
