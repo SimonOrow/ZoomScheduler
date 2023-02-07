@@ -58,6 +58,16 @@ public class HelloApplication extends Application {
             }
         });
 
+        Button scheduleButton = (Button) scene.lookup("#scheduleButton");
+        scheduleButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                beginScheduling(scene);
+            }
+        });
+
+
+
+
     }
 
     public static void importAttendees(Scene scene) {
@@ -116,6 +126,17 @@ public class HelloApplication extends Application {
         alert.showAndWait();
     }
 
+    public static void beginScheduling(Scene scene) {
+        TableView timesTable = (TableView) scene.lookup("#availabilityTable");
+        TableTime person = (TableTime) timesTable.getSelectionModel().getSelectedItem();
+
+        if(person == null) {
+            showAlertWithHeaderText("Please ensure data is loaded and you have selected a time.");
+            return;
+        }
+
+        System.out.println(person.getTime());
+    }
 
     public static void main(String[] args) {
         launch();
