@@ -6,10 +6,14 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import com.google.gson.Gson;
+import com.simonorow.zoomscheduler.Models.LettuceMeet.PollResponse;
 
-public class LettuceMeetQuery {
+public class LettuceMeet {
 
     public static LettuceMeetResponse getSchedule(String lettuceMeetUrl) throws Exception {
 
@@ -61,6 +65,17 @@ public class LettuceMeetQuery {
         LettuceMeetResponse model = gson.fromJson(response, LettuceMeetResponse.class);
         return model;
 
+    }
+
+    public static Map<String, String> getUsers(LettuceMeetResponse response) {
+        Map<String, String> users = new HashMap<>();
+        ArrayList<PollResponse> responses = response.data.event.pollResponses;
+
+        for (PollResponse individualResponse : responses) {
+            users.put(individualResponse.user.name,individualResponse.user.email);
+        }
+
+        return users;
     }
 
 

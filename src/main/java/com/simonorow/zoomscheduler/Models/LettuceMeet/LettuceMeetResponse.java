@@ -4,5 +4,3 @@ package com.simonorow.zoomscheduler.Models.LettuceMeet;
 public class LettuceMeetResponse {
     public Data data;
 }
-
-

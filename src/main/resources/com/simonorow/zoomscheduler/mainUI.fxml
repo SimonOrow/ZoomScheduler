@@ -107,11 +107,11 @@
                   <VBox prefHeight="222.0" prefWidth="255.0">
                      <children>
                         <Label text="Import Attendees (LettuceMeet)" />
-                        <TextField id="newparticipantemail" promptText="Enter LettuceMeet Link">
+                        <TextField id="lettucemeetlink" promptText="Enter LettuceMeet Link">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets></TextField>
-                        <Button id="submitparticipant" mnemonicParsing="false" text="Import Attendees" />
+                        <Button id="importattendees" mnemonicParsing="false" text="Import Attendees" />
                      </children>
                   </VBox>
                </children>

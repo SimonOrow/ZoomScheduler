@@ -5,7 +5,7 @@ module com.simonorow.zoomscheduler {
     requires com.google.gson;
 
     opens com.simonorow.zoomscheduler to javafx.fxml;
-    opens com.simonorow.zoomscheduler.Models to com.google.gson;
+    opens com.simonorow.zoomscheduler.Models to com.google.gson, javafx.base;
     exports com.simonorow.zoomscheduler;
     opens com.simonorow.zoomscheduler.Models.LettuceMeet to com.google.gson;
 }
