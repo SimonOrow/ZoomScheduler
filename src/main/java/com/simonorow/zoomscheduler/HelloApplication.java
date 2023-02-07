@@ -15,8 +15,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.simonorow.zoomscheduler.Zoom.getUserId;
-
 public class HelloApplication extends Application {
 
     @Override
