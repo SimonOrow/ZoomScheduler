@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.simonorow.zoomscheduler.Zoom.getUserId;
+
 public class HelloApplication extends Application {
 
     @Override
@@ -61,13 +63,9 @@ public class HelloApplication extends Application {
         Button scheduleButton = (Button) scene.lookup("#scheduleButton");
         scheduleButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                beginScheduling(scene);
+                // beginScheduling(scene);
             }
         });
-
-
-
-
     }
 
     public static void importAttendees(Scene scene) {
@@ -126,7 +124,7 @@ public class HelloApplication extends Application {
         alert.showAndWait();
     }
 
-    public static void beginScheduling(Scene scene) {
+    public static void beginScheduling(Scene scene) throws Exception {
         TableView timesTable = (TableView) scene.lookup("#availabilityTable");
         TableTime person = (TableTime) timesTable.getSelectionModel().getSelectedItem();
 
@@ -134,8 +132,6 @@ public class HelloApplication extends Application {
             showAlertWithHeaderText("Please ensure data is loaded and you have selected a time.");
             return;
         }
-
-        System.out.println(person.getTime());
     }
 
     public static void main(String[] args) {

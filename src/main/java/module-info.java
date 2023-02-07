@@ -8,4 +8,5 @@ module com.simonorow.zoomscheduler {
     opens com.simonorow.zoomscheduler.Models to com.google.gson, javafx.base;
     exports com.simonorow.zoomscheduler;
     opens com.simonorow.zoomscheduler.Models.LettuceMeet to com.google.gson;
+    opens com.simonorow.zoomscheduler.Models.ZoomGetUsers to com.google.gson;
 }
