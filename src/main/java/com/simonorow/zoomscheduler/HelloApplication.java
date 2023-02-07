@@ -1,16 +1,14 @@
 package com.simonorow.zoomscheduler;
 
 import com.simonorow.zoomscheduler.Models.LettuceMeet.LettuceMeetResponse;
+import com.simonorow.zoomscheduler.Models.TableTime;
 import com.simonorow.zoomscheduler.Models.TableUser;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -29,16 +27,28 @@ public class HelloApplication extends Application {
         stage.show();
 
         // Load tableView.
-        TableView tb = (TableView) scene.lookup("#participants");
+        TableView usersTable = (TableView) scene.lookup("#participants");
         TableColumn<TableUser, String> column1 = new TableColumn<>("Name");
         column1.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<TableUser, String> column2 = new TableColumn<>("Email");
         column2.setCellValueFactory(new PropertyValueFactory<>("email"));
-        column1.prefWidthProperty().bind(tb.widthProperty().divide(2)); // w * 1/2
-        column2.prefWidthProperty().bind(tb.widthProperty().divide(2)); // w * 1/2
+        column1.prefWidthProperty().bind(usersTable.widthProperty().divide(2)); // w * 1/2
+        column2.prefWidthProperty().bind(usersTable.widthProperty().divide(2)); // w * 1/2
+        usersTable.getColumns().add(column1);
+        usersTable.getColumns().add(column2);
 
-        tb.getColumns().add(column1);
-        tb.getColumns().add(column2);
+
+        TableView timesTable = (TableView) scene.lookup("#availabilityTable");
+        TableColumn<TableTime, String> timeColumn1 = new TableColumn<>("Time");
+        timeColumn1.setCellValueFactory(new PropertyValueFactory<>("time"));
+        TableColumn<TableTime, String> timeColumn2 = new TableColumn<>("Number of available participants");
+        timeColumn2.setCellValueFactory(new PropertyValueFactory<>("count"));
+        timeColumn1.prefWidthProperty().bind(timesTable.widthProperty().divide(2)); // w * 1/2
+        timeColumn2.prefWidthProperty().bind(timesTable.widthProperty().divide(2)); // w * 1/2
+        timesTable.getColumns().add(timeColumn1);
+        timesTable.getColumns().add(timeColumn2);
+
+
 
 
         Button importAttendees = (Button) scene.lookup("#importattendees");
@@ -52,15 +62,23 @@ public class HelloApplication extends Application {
 
     public static void importAttendees(Scene scene) {
         TextField lettuceMeetTextField = (TextField) scene.lookup("#lettucemeetlink");
+
+        if(lettuceMeetTextField.getText().isEmpty()) {
+            showAlertWithHeaderText("Please enter a link.");
+            return;
+        }
+
         new Thread(() -> {
             try {
                 LettuceMeetResponse response = LettuceMeet.getSchedule(lettuceMeetTextField.getText());
-                Scheduler scheduler = new Scheduler();
-                scheduler.findOptimalTime(response);
-                System.out.println(scheduler.getAvailabilityTimes());
 
                 Map<String, String> users = LettuceMeet.getUsers(response);
-                fillTable(scene, users);
+                fillParticipantsTable(scene, users);
+
+
+                Scheduler scheduler = new Scheduler();
+                scheduler.findOptimalTime(response);
+                fillTimeTable(scene, scheduler.getAvailabilityTimes());
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -69,7 +87,7 @@ public class HelloApplication extends Application {
     }
 
 
-    public static void fillTable(Scene scene, Map<String, String> users) {
+    public static void fillParticipantsTable(Scene scene, Map<String, String> users) {
         TableView tb = (TableView) scene.lookup("#participants");
         for (Map.Entry<String, String> entry : users.entrySet()) {
             String key = entry.getKey();
@@ -77,6 +95,27 @@ public class HelloApplication extends Application {
             tb.getItems().add(new TableUser(key, value));
         }
     }
+
+    public static void fillTimeTable(Scene scene, Map<String, Integer> times) {
+        TableView timesTable = (TableView) scene.lookup("#availabilityTable");
+        for (Map.Entry<String, Integer> entry : times.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue();
+            TableTime tableTime = new TableTime(String.valueOf(key), String.valueOf(value));
+            timesTable.getItems().add(tableTime);
+        }
+    }
+
+    // Show a Information Alert with header Text
+    private static void showAlertWithHeaderText(String text) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Zoom Scheduler");
+        alert.setHeaderText("Information");
+        alert.setContentText(text);
+
+        alert.showAndWait();
+    }
+
 
     public static void main(String[] args) {
         launch();

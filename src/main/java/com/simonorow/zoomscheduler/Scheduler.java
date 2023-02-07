@@ -50,6 +50,5 @@ public class Scheduler {
     public Map<String, Integer> getAvailabilityTimes() {
         return availabilityTimes;
     }
-
 }
 
