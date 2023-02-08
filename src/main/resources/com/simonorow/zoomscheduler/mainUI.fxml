@@ -46,16 +46,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="590.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="590.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.simonorow.zoomscheduler.HelloApplication">
+    <VBox prefHeight="590.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar prefHeight="20.0" prefWidth="852.0" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem id="quitMenu" mnemonicParsing="false" text="Quit" />
+            <MenuItem id="quitMenu" mnemonicParsing="false" onAction="#exitProgram" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Help">
+        <Menu mnemonicParsing="false" onAction="#about" text="Help">
           <items>
             <MenuItem id="aboutMenu" mnemonicParsing="false" text="About MyHelloApp" />
           </items>
@@ -102,3 +103,4 @@
     </AnchorPane>
   </children>
 </VBox>
+</AnchorPane>

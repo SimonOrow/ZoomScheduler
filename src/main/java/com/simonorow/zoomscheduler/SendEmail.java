@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,11 +20,16 @@ public class SendEmail {
 
     public static void sendEmail(Map<String, String> users, BasicMeetingInfo meetingInfo) throws Exception {
 
+        String strDate = new SimpleDateFormat("MM/dd/yyyy 'at' hh:mm a").format(meetingInfo.date);
+
         Personalization personalization = new Personalization();
         ArrayList<To> to = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : users.entrySet()) {
             String value = entry.getValue();
+            if(value.isEmpty()) {
+                continue;
+            }
             to.add(new To(value));
         }
         personalization.to = to;
@@ -32,7 +38,7 @@ public class SendEmail {
 
         Content content = new Content();
         content.type = "text/plain";
-        content.value = "You've been invited to a meeting.\nLink: " + meetingInfo.link + "\nPassword: "+meetingInfo.password;
+        content.value = "You've been invited to a meeting.\n\nLink: " + meetingInfo.link + "\n\nPassword: "+meetingInfo.password + "\n\n" + "Date: "+strDate;
         ArrayList<Content> contentList = new ArrayList<>();
         contentList.add(content);
 

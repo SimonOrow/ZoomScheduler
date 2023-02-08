@@ -17,6 +17,10 @@ public class Scheduler {
             for (Availability currentAvailability : availabilities) {
                 Date start = currentAvailability.start;
                 Date end = currentAvailability.end;
+
+                System.out.print("Start: " + start);
+
+
                 findHoursBetweenRange(start, end);
             }
         }
@@ -29,6 +33,8 @@ public class Scheduler {
         Calendar calendar2 = GregorianCalendar.getInstance();
         calendar2.setTime(date2);
 
+
+
         double seconds = (date2.getTime() - date1.getTime()) * 0.001;
         int duration  = (int)seconds;
         int ThirtyMinIntervals = duration/60/30;
@@ -36,7 +42,8 @@ public class Scheduler {
         for(int interval=0;interval<ThirtyMinIntervals; interval++) {
             String hours = String.valueOf(calendar1.get(Calendar.HOUR));
             String minutes = String.format("%02d", calendar1.get(Calendar.MINUTE));
-            String time = hours + ":" + minutes;
+            String am_pm = (calendar1.get(Calendar.AM_PM) == 0) ? "AM" : "PM";
+            String time = (hours.equals("0") ? "12" : hours) + ":" + minutes+ " " + am_pm;
 
             if(availabilityTimes.containsKey(time)) {
                 availabilityTimes.merge(time, 1, Integer::sum);

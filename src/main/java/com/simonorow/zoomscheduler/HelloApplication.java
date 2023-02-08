@@ -1,7 +1,6 @@
 package com.simonorow.zoomscheduler;
 
 import com.simonorow.zoomscheduler.Models.LettuceMeet.LettuceMeetResponse;
-import com.simonorow.zoomscheduler.Models.SendGridRequest.Email;
 import com.simonorow.zoomscheduler.Models.TableTime;
 import com.simonorow.zoomscheduler.Models.TableUser;
 import com.simonorow.zoomscheduler.Models.ZoomMeeting.BasicMeetingInfo;
@@ -15,11 +14,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
+
+import static com.simonorow.zoomscheduler.Zoom.GenerateMeetingDate;
 
 public class HelloApplication extends Application {
 
-    static Map<String, String> users = null;
+    static LettuceMeetResponse lettuceMeetResponse = null;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -29,6 +31,7 @@ public class HelloApplication extends Application {
         stage.setTitle("Zoom Scheduler");
         stage.setScene(scene);
         stage.show();
+
 
         // Load tableView.
         TableView usersTable = (TableView) scene.lookup("#participants");
@@ -72,6 +75,18 @@ public class HelloApplication extends Application {
                 }
             }
         });
+
+
+        String zoomID = System.getenv("ZOOM_ACCOUNT_ID");
+        String clientID = System.getenv("ZOOM_CLIENT_ID");
+        String clientSecret = System.getenv("ZOOM_CLIENT_SECRET");
+        String sendGridAPIKey = System.getenv("SENDGRID_API_KEY");
+
+        if(zoomID == null || clientID == null || clientSecret == null || sendGridAPIKey == null) {
+            importAttendees.setDisable(true);
+            scheduleButton.setDisable(true);
+            showAlertWithHeaderText("Environment variables are missing. Please add missing variables and restart the application.");
+        }
     }
 
     public static void importAttendees(Scene scene) {
@@ -85,13 +100,14 @@ public class HelloApplication extends Application {
         new Thread(() -> {
             try {
                 LettuceMeetResponse response = LettuceMeet.getSchedule(lettuceMeetTextField.getText());
-                users = LettuceMeet.getUsers(response);
+                lettuceMeetResponse = response;
+                Map<String, String> users = LettuceMeet.getUsers(response);
                 fillParticipantsTable(scene, users);
 
 
                 Scheduler scheduler = new Scheduler();
                 scheduler.findOptimalTime(response);
-                fillTimeTable(scene, scheduler.getAvailabilityTimes());
+                fillTimeTable(scene, MapUtil.sortByValue(scheduler.getAvailabilityTimes()));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -132,6 +148,11 @@ public class HelloApplication extends Application {
         TableView timesTable = (TableView) scene.lookup("#availabilityTable");
         TableTime time = (TableTime) timesTable.getSelectionModel().getSelectedItem();
 
+        Map<String, String> users = LettuceMeet.getUsers(lettuceMeetResponse);
+        String meetDate = lettuceMeetResponse.data.event.pollDates.get(0);
+        Date date = GenerateMeetingDate(meetDate, String.valueOf(time.getTime()));
+        System.out.println("Date Generated: " + date);
+
         if(time == null || users == null) {
             showAlertWithHeaderText("Please ensure data is loaded and you have selected a time.");
             return;
@@ -139,9 +160,16 @@ public class HelloApplication extends Application {
 
         String zoomToken = Zoom.ZoomToken();
         String zoomUserId = Zoom.getUserId(zoomToken);
-        BasicMeetingInfo basicMeetingInfo = Zoom.scheduleMeeting(zoomToken, zoomUserId);
+        BasicMeetingInfo basicMeetingInfo = Zoom.scheduleMeeting(zoomToken, zoomUserId, date);
         SendEmail.sendEmail(users, basicMeetingInfo);
+    }
 
+    public void exitProgram(ActionEvent actionEvent) {
+       System.exit(0);
+    }
+
+    public void about(ActionEvent actionEvent) {
+        showAlertWithHeaderText("Made By Simon Orow\n\nFor the DeveloperWeek 2023 Hackathon");
     }
 
     public static void main(String[] args) {

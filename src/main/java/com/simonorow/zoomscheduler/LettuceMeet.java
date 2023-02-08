@@ -1,5 +1,6 @@
 package com.simonorow.zoomscheduler;
 
+import com.google.gson.GsonBuilder;
 import com.simonorow.zoomscheduler.Models.LettuceMeet.LettuceMeetResponse;
 
 import java.io.InputStream;
@@ -61,7 +62,8 @@ public class LettuceMeet {
         String response = s.hasNext() ? s.next() : "";
         System.out.println(response);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
         LettuceMeetResponse model = gson.fromJson(response, LettuceMeetResponse.class);
         return model;
 

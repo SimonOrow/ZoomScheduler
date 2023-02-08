@@ -2,9 +2,11 @@ package com.simonorow.zoomscheduler;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.simonorow.zoomscheduler.Models.ZoomGetUsers.UsersList;
 import com.simonorow.zoomscheduler.Models.ZoomMeeting.BasicMeetingInfo;
 import com.simonorow.zoomscheduler.Models.ZoomMeeting.CreationResponse;
+import com.simonorow.zoomscheduler.Models.ZoomMeetingRequestParams;
 import com.simonorow.zoomscheduler.Models.ZoomOAuthResponse;
 
 import java.io.InputStream;
@@ -12,8 +14,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Base64;
-import java.util.Scanner;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.util.*;
 
 // Utilizes Server-to-Server for simplicity.
 public class Zoom {
@@ -83,8 +88,26 @@ public class Zoom {
         return model.users.get(0).id;
     }
 
-    public static BasicMeetingInfo scheduleMeeting(String zoomToken, String userId) throws Exception {
+    public static BasicMeetingInfo scheduleMeeting(String zoomToken, String userId, Date date) throws Exception {
         TrustOverride.begin();
+
+        String strDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(date);
+        System.out.println("Date for Meeting: "+ strDate);
+
+
+        ZoomMeetingRequestParams zoomMeetingRequestParams = new ZoomMeetingRequestParams();
+        zoomMeetingRequestParams.agenda = "Scheduled Zoom Meeting";
+        zoomMeetingRequestParams.topic = "Scheduled Zoom Meeting";
+        zoomMeetingRequestParams.default_password = false;
+        zoomMeetingRequestParams.duration = 30;
+        zoomMeetingRequestParams.password = "123456";
+        zoomMeetingRequestParams.pre_schedule = false;
+        zoomMeetingRequestParams.join_before_host = true;
+        zoomMeetingRequestParams.start_time = strDate;
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
+        String json = gson.toJson(zoomMeetingRequestParams);
+
 
         URL url = new URL("https://api.zoom.us/v2/users/"+userId+"/meetings");
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
@@ -96,7 +119,7 @@ public class Zoom {
 
         httpConn.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(httpConn.getOutputStream());
-        writer.write("{\n  \"agenda\": \"My Meeting\",\n  \"default_password\": false,\n  \"duration\": 30,\n  \"password\": \"123456\",\n  \"pre_schedule\": false,\n  \"join_before_host\": true,\n  \"start_time\": \"2022-03-25T07:32:55Z\",\n  \"topic\": \"My Meeting\"\n  \n}");
+        writer.write(json);
         writer.flush();
         writer.close();
         httpConn.getOutputStream().close();
@@ -108,11 +131,27 @@ public class Zoom {
         String response = s.hasNext() ? s.next() : "";
         System.out.println(response);
 
-        Gson gson = new Gson();
         CreationResponse model = gson.fromJson(response, CreationResponse.class);
 
-        return new BasicMeetingInfo(model.join_url, model.password);
+        return new BasicMeetingInfo(model.join_url, model.password, model.start_time);
 
     }
 
+
+    public static Date GenerateMeetingDate(String meetDate, String time) throws ParseException {
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(meetDate);
+
+        String[] SplitNumericalAndAMPM = time.split(" ");
+        String[] timeData = SplitNumericalAndAMPM[0].split(":");
+        int ap = (SplitNumericalAndAMPM[1].equals("AM")) ? 0 : 1;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR, Integer.valueOf(timeData[0])); // 12-hour format. Calendar.HOUR_OF_DAY = 24-hour format.
+        cal.set(Calendar.MINUTE, Integer.valueOf(timeData[1]));
+        cal.set(Calendar.AM_PM, ap);
+        return cal.getTime();
+
+
+    }
 }

@@ -21,7 +21,6 @@ public class WebServer {
         if (single_instance == null) {
             single_instance = new WebServer();
         }
-
         return single_instance;
     }
 

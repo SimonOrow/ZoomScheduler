@@ -9,5 +9,6 @@ public class ZoomMeetingRequestParams {
     public String schedule_for;
     public String timezone;
     public String topic;
+    public String start_time;
     public boolean join_before_host;
 }
