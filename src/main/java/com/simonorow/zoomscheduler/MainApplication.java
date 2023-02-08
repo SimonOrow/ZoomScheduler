@@ -19,14 +19,14 @@ import java.util.Map;
 
 import static com.simonorow.zoomscheduler.Zoom.GenerateMeetingDate;
 
-public class HelloApplication extends Application {
+public class MainApplication extends Application {
 
     static LettuceMeetResponse lettuceMeetResponse = null;
 
     @Override
     public void start(Stage stage) throws IOException {
         // Set initial scene.
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("mainUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("mainUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 914, 573);
         stage.setTitle("Zoom Scheduler");
         stage.setScene(scene);
@@ -85,7 +85,7 @@ public class HelloApplication extends Application {
         if(zoomID == null || clientID == null || clientSecret == null || sendGridAPIKey == null) {
             importAttendees.setDisable(true);
             scheduleButton.setDisable(true);
-            showAlertWithHeaderText("Environment variables are missing. Please add missing variables and restart the application.");
+            infoAlert("Environment variables are missing. Please add missing variables and restart the application.");
         }
     }
 
@@ -93,7 +93,7 @@ public class HelloApplication extends Application {
         TextField lettuceMeetTextField = (TextField) scene.lookup("#lettucemeetlink");
 
         if(lettuceMeetTextField.getText().isEmpty()) {
-            showAlertWithHeaderText("Please enter a link.");
+            infoAlert("Please enter a link.");
             return;
         }
 
@@ -136,7 +136,7 @@ public class HelloApplication extends Application {
     }
 
     // Show an Information Alert with header Text
-    private static void showAlertWithHeaderText(String text) {
+    private static void infoAlert(String text) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Zoom Scheduler");
         alert.setHeaderText("Information");
@@ -154,7 +154,7 @@ public class HelloApplication extends Application {
         System.out.println("Date Generated: " + date);
 
         if(time == null || users == null) {
-            showAlertWithHeaderText("Please ensure data is loaded and you have selected a time.");
+            infoAlert("Please ensure data is loaded and you have selected a time.");
             return;
         }
 
@@ -162,6 +162,7 @@ public class HelloApplication extends Application {
         String zoomUserId = Zoom.getUserId(zoomToken);
         BasicMeetingInfo basicMeetingInfo = Zoom.scheduleMeeting(zoomToken, zoomUserId, date);
         SendEmail.sendEmail(users, basicMeetingInfo);
+        infoAlert("The meeting has been scheduled and all emails have been sent.");
     }
 
     public void exitProgram(ActionEvent actionEvent) {
@@ -169,7 +170,7 @@ public class HelloApplication extends Application {
     }
 
     public void about(ActionEvent actionEvent) {
-        showAlertWithHeaderText("Made By Simon Orow\n\nFor the DeveloperWeek 2023 Hackathon");
+        infoAlert("Made By Simon Orow\n\nFor the DeveloperWeek 2023 Hackathon");
     }
 
     public static void main(String[] args) {

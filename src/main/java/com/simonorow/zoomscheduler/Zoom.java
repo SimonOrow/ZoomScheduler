@@ -91,7 +91,7 @@ public class Zoom {
     public static BasicMeetingInfo scheduleMeeting(String zoomToken, String userId, Date date) throws Exception {
         TrustOverride.begin();
 
-        String strDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(date);
+        String strDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date);
         System.out.println("Date for Meeting: "+ strDate);
 
 
@@ -133,7 +133,7 @@ public class Zoom {
 
         CreationResponse model = gson.fromJson(response, CreationResponse.class);
 
-        return new BasicMeetingInfo(model.join_url, model.password, model.start_time);
+        return new BasicMeetingInfo(model.join_url, model.password, model.start_time, model.timezone);
 
     }
 
@@ -151,7 +151,19 @@ public class Zoom {
         cal.set(Calendar.MINUTE, Integer.valueOf(timeData[1]));
         cal.set(Calendar.AM_PM, ap);
         return cal.getTime();
+    }
 
+    public static Date shiftTimeZone(Date date, TimeZone sourceTimeZone, TimeZone targetTimeZone) {
+        Calendar sourceCalendar = Calendar.getInstance();
+        sourceCalendar.setTime(date);
+        sourceCalendar.setTimeZone(sourceTimeZone);
 
+        Calendar targetCalendar = Calendar.getInstance();
+        for (int field : new int[] {Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND}) {
+            targetCalendar.set(field, sourceCalendar.get(field));
+        }
+        targetCalendar.setTimeZone(targetTimeZone);
+
+        return targetCalendar.getTime();
     }
 }

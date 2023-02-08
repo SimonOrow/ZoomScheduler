@@ -12,15 +12,14 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class SendEmail {
 
     public static void sendEmail(Map<String, String> users, BasicMeetingInfo meetingInfo) throws Exception {
 
-        String strDate = new SimpleDateFormat("MM/dd/yyyy 'at' hh:mm a").format(meetingInfo.date);
+        Date date = Zoom.shiftTimeZone(meetingInfo.date, TimeZone.getTimeZone("UTC"), TimeZone.getTimeZone(meetingInfo.timezone));
+        String strDate = new SimpleDateFormat("MM/dd/yyyy 'at' hh:mm a").format(date);
 
         Personalization personalization = new Personalization();
         ArrayList<To> to = new ArrayList<>();
