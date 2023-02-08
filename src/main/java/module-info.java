@@ -9,4 +9,6 @@ module com.simonorow.zoomscheduler {
     exports com.simonorow.zoomscheduler;
     opens com.simonorow.zoomscheduler.Models.LettuceMeet to com.google.gson;
     opens com.simonorow.zoomscheduler.Models.ZoomGetUsers to com.google.gson;
+    opens com.simonorow.zoomscheduler.Models.ZoomMeeting to com.google.gson;
+    opens com.simonorow.zoomscheduler.Models.SendGridRequest to com.google.gson;
 }

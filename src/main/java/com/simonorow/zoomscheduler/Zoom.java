@@ -60,11 +60,8 @@ public class Zoom {
         return model.access_token;
     }
 
-    public String getUserId(String zoomToken) throws Exception {
+    public static String getUserId(String zoomToken) throws Exception {
         TrustOverride.begin();
-
-        String authenticationString = ZoomToken();
-
 
         URL url = new URL("https://api.zoom.us/v2/users?status=active&page_size=30&role_id=0&page_number=1&include_fields=custom_attributes");
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();

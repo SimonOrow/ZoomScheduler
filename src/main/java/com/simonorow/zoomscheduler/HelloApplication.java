@@ -1,8 +1,10 @@
 package com.simonorow.zoomscheduler;
 
 import com.simonorow.zoomscheduler.Models.LettuceMeet.LettuceMeetResponse;
+import com.simonorow.zoomscheduler.Models.SendGridRequest.Email;
 import com.simonorow.zoomscheduler.Models.TableTime;
 import com.simonorow.zoomscheduler.Models.TableUser;
+import com.simonorow.zoomscheduler.Models.ZoomMeeting.BasicMeetingInfo;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,6 +18,8 @@ import java.io.IOException;
 import java.util.Map;
 
 public class HelloApplication extends Application {
+
+    static Map<String, String> users = null;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -61,7 +65,11 @@ public class HelloApplication extends Application {
         Button scheduleButton = (Button) scene.lookup("#scheduleButton");
         scheduleButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                // beginScheduling(scene);
+                try {
+                    beginScheduling(scene);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }
@@ -77,8 +85,7 @@ public class HelloApplication extends Application {
         new Thread(() -> {
             try {
                 LettuceMeetResponse response = LettuceMeet.getSchedule(lettuceMeetTextField.getText());
-
-                Map<String, String> users = LettuceMeet.getUsers(response);
+                users = LettuceMeet.getUsers(response);
                 fillParticipantsTable(scene, users);
 
 
@@ -112,24 +119,29 @@ public class HelloApplication extends Application {
         }
     }
 
-    // Show a Information Alert with header Text
+    // Show an Information Alert with header Text
     private static void showAlertWithHeaderText(String text) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Zoom Scheduler");
         alert.setHeaderText("Information");
         alert.setContentText(text);
-
         alert.showAndWait();
     }
 
     public static void beginScheduling(Scene scene) throws Exception {
         TableView timesTable = (TableView) scene.lookup("#availabilityTable");
-        TableTime person = (TableTime) timesTable.getSelectionModel().getSelectedItem();
+        TableTime time = (TableTime) timesTable.getSelectionModel().getSelectedItem();
 
-        if(person == null) {
+        if(time == null || users == null) {
             showAlertWithHeaderText("Please ensure data is loaded and you have selected a time.");
             return;
         }
+
+        String zoomToken = Zoom.ZoomToken();
+        String zoomUserId = Zoom.getUserId(zoomToken);
+        BasicMeetingInfo basicMeetingInfo = Zoom.scheduleMeeting(zoomToken, zoomUserId);
+        SendEmail.sendEmail(users, basicMeetingInfo);
+
     }
 
     public static void main(String[] args) {
